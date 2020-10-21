@@ -10,15 +10,18 @@ contract Lottery {
     function getBalance() public view returns (uint) {
         address(this).balance;
     }
+
     function enter() public payable {
         require (msg.value >= 0.01 ether);
         players.push(msg.sender);
     }
+
     function random() private view returns (uint) {
         bytes memory val;
         val = abi.encodePacked(block.difficulty, block.timestamp, players);
         return uint (keccak256(val));
     }
+
     function pickWinner() public checkForOnlyManager {
         uint index = random() % players.length;
         address payable winner;
@@ -27,6 +30,7 @@ contract Lottery {
         //clear array for next round
         players = new address[](0); 
     } 
+    
      modifier checkForOnlyManager {
         require (msg.sender == manager);
         _;  

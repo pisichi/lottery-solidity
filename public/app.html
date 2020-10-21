@@ -1,0 +1,111 @@
+<html>
+
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/web3@latest/dist/web3.min.js"></script>
+  <script>
+    const web3 = new Web3();
+    web3.setProvider(
+      new web3.providers.HttpProvider("http://localhost:8545")
+    );
+    const address = "0x899D712767c7e0cEA5179f36F7189AB6aF35d14e";
+    const abi = [
+      { inputs: [], stateMutability: "nonpayable", type: "constructor" },
+      {
+        inputs: [],
+        name: "enter",
+        outputs: [],
+        stateMutability: "payable",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "getBalance",
+        outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "getPlayers",
+        outputs: [{ internalType: "address[]", name: "", type: "address[]" }],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "manager",
+        outputs: [{ internalType: "address", name: "", type: "address" }],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "pickWinner",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+      },
+      {
+        inputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+        name: "players",
+        outputs: [{ internalType: "address", name: "", type: "address" }],
+        stateMutability: "view",
+        type: "function",
+      },
+      {
+        inputs: [],
+        name: "winner",
+        outputs: [
+          { internalType: "address payable", name: "", type: "address" },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+    ];
+    var lottery = new web3.eth.Contract(abi, address);
+    var accounts;
+    async function getAccounts() {
+      accounts = await web3.eth.getAccounts();
+      await web3.eth.personal.unlockAccount(accounts[0], "password1", 0);
+
+      manager = await lottery.methods.manager().call()
+      document.getElementById('manager').innerHTML = manager
+
+      players = await lottery.methods.getPlayers().call()
+      document.getElementById('players').innerHTML = players.count
+
+      balance = await lottery.methods.getBalance().call()
+      document.getElementById('balance').innerHTML = balance
+    }
+
+    const enterBet = async () => {
+      amt = document.getElementById("amount").value
+web3.eth.sendTransaction({from: accounts[0], to: address ,value: web3.utils.toWei(amt,"ether")})
+      await lottery.methods.enter().send({ from: accounts[0], gas: 40000 })
+      document.getElementById('status').innerHTML = "complete"
+    }
+
+    const pickWinner = async () => {
+      await lottery.methods.pickWinner().send({ from: accounts[0], gas: 40000 })
+    }
+
+  </script>
+</head>
+
+<body onload="getAccounts()">
+  <h1> Lottery Contract </h1>
+  <h3>Manager is: <a id="manager"></a></h3>
+  <h3>There is: <a id="players"></a> people participate</h3>
+  <h3>the winner get <a id="balance"></a> ether</h3>
+  <hr />
+  <h3>wanna play?</h3>
+  <label>how much money do you need to bet? (greater than 0.01 ether)</label>
+  <input type = "text" id = "amount"/>
+  <button type='button' onclick='enterBet()'> enterBet </button>
+  <h5><a id="status"></a></h5>
+  <hr />
+  <label>Pick winner</label>
+  <button type='button' onclick='pickWinner()'> pickwinner </button>
+</body>
+
+</html>
