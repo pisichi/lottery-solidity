@@ -90,7 +90,7 @@ describe('lottery', () => {
         assert.strictEqual("not ok", pass);
     });
 
-    it('sends money to the winner and resets the players array', async () => {
+    it ('sends money to the winner and resets the players array', async() => {
         await lottery.methods.enter().send({
             from: accounts[0],
             value: web3.utils.toWei("2", "ether")
@@ -99,7 +99,7 @@ describe('lottery', () => {
         console.log('initialBalance = ' + web3.utils.fromWei(initialBalance, "ether"))
         await lottery.methods.pickWinner().send({
             from: accounts[0]
-        });
+        });    
         //check correct winner
         winner = await lottery.methods.winner().call()
         assert.strictEqual(accounts[0], winner)
@@ -107,10 +107,10 @@ describe('lottery', () => {
         console.log('finalBalance = ' + web3.utils.fromWei(finalBalance, "ether"))
         //check that the winner got money
         const difference = finalBalance - initialBalance;
-        console.log(web3.utils.fromWei('0' + difference, "ether"));
+        console.log(web3.utils.fromWei('0'+difference, "ether"));
         assert(difference > web3.utils.toWei("1.8", "ether"));
         //check that the number of players is 0
-        const players = await lottery.methods.getPlayers().call({
+        const players =await lottery.methods.getPlayers().call({
             from: accounts[0]
         });
         assert.strictEqual(0, players.length);
