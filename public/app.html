@@ -72,7 +72,7 @@
       document.getElementById('manager').innerHTML = manager
 
       players = await lottery.methods.getPlayers().call()
-      document.getElementById('players').innerHTML = players.count
+      document.getElementById('players').innerHTML = players.length
 
       balance = await lottery.methods.getBalance().call()
       document.getElementById('balance').innerHTML = balance
@@ -80,7 +80,7 @@
 
     const enterBet = async () => {
       amt = document.getElementById("amount").value
-web3.eth.sendTransaction({from: accounts[0], to: address ,value: web3.utils.toWei(amt,"ether")})
+      web3.eth.sendTransaction({from: accounts[0], to: address ,value: web3.utils.toWei(amt,"ether")})
       await lottery.methods.enter().send({ from: accounts[0], gas: 40000 })
       document.getElementById('status').innerHTML = "complete"
     }
