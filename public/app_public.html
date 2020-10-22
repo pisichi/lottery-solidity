@@ -69,8 +69,15 @@
 
         pickWinner = async () => {
 
-            const accounts = await web3.eth.getAccounts();
-            await lottery.methods.pickWinner().send({ from: accounts[0], gas: 400000 })
+            try{
+            const accounts = await web3.eth.getAccounts(); 
+            await lottery.methods.pickWinner().send({ from: accounts[0], gas: 400000 })     
+           
+            }
+            catch(err){
+                document.getElementById("result").innerHTML =
+                "failed!!";
+            }
         };
 
     </script>
@@ -109,10 +116,13 @@
         <label>how much money do you need to bet? (greater than 0.01 ether)</label>
         <input type="number" id="amount" />
         <button type="button" class="btn btn-primary" onclick='enterBet()'> participate </button>
-        <small><a id="status"></a></small>
+        <br/>
+        <small class="text-primary"><a id="status"></a></small>
         <hr />
         <h3>Pick winner</h3>
         <button type="button" class="btn btn-primary" onclick='pickWinner()'> pickwinner </button>
+        <br/>
+        <small  class="text-danger"><a id="result"></a></small>
 
     </div>
 </body>
